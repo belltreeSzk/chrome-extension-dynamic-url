@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Chrome Extension</title>
+    <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+    <div class="title">Setup</div>
+    <div class="field">
+        <div class="field-name">ShortURL</div>
+        <input id="short-url" class="input-field" type="text" placeholder="****.page.link" value="https://belz.page.link">
+    </div>
+
+    <div class="field">
+        <div class="field-name">API TOKEN</div>
+        <input id="api-token" class="input-field" type="text" placeholder="AIzaSyAhkyup4RMD***********" value="AIzaSyAhkyup4RMDpDx5Q3vejLx2IVn90hYo81Q">
+    </div>
+    <div id="confirm-result" class="field confirm-result">
+        <div>Enter your ShortURL and API Token and select <b>Confirm</b>.</div>
+    </div>
+
+    <div class="field setting-buttons">
+        <div id="remove" class="button setting-button remove"><i class="fas fa-trash-alt"></i>　 Remove</div>
+        <div id="help" class="button setting-button help"><i class="fas fa-question-circle"></i> Help</div>
+        <div id="confirm" class="button setting-button confirm"><i class="fas fa-id-badge"></i> Confirm</div>
+        <div id="save" class="button setting-button save"><i class="fas fa-check"></i> Save</div>
+    </div>
+    <div id="success-popup" class="balloon1-top">
+        <p>Success!</p>
+    </div>
+    <script src="options.js"></script>
+</body>
+</html>
