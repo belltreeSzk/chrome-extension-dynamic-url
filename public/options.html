@@ -2,33 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Chrome Extension</title>
+    <title>Setup for Original URL Shortener</title>
     <link rel="stylesheet" href="options.css" />
 </head>
 <body>
-    <div class="title">Setup</div>
+    <div class="title">Setup for Original URL Shortener</div>
     <div class="field">
-        <div class="field-name">ShortURL</div>
-        <input id="short-url" class="input-field" type="text" placeholder="****.page.link" value="https://belz.page.link">
+        <div class="field-name">Dynamic Link Domain</div>
+        <input id="short-url" class="input-field" type="text" placeholder="https://****.page.link">
     </div>
 
     <div class="field">
-        <div class="field-name">API TOKEN</div>
-        <input id="api-token" class="input-field" type="text" placeholder="AIzaSyAhkyup4RMD***********" value="AIzaSyAhkyup4RMDpDx5Q3vejLx2IVn90hYo81Q">
+        <div class="field-name">API Key</div>
+        <input id="api-token" class="input-field" type="text" placeholder="AIzaSyAhkyup4RMD***********">
     </div>
     <div id="confirm-result" class="field confirm-result">
         <div>Enter your ShortURL and API Token and select <b>Confirm</b>.</div>
     </div>
 
     <div class="field setting-buttons">
-        <div id="remove" class="button setting-button remove"><i class="fas fa-trash-alt"></i>　 Remove</div>
-        <div id="help" class="button setting-button help"><i class="fas fa-question-circle"></i> Help</div>
-        <div id="confirm" class="button setting-button confirm"><i class="fas fa-id-badge"></i> Confirm</div>
-        <div id="save" class="button setting-button save"><i class="fas fa-check"></i> Save</div>
+        <div>
+            <div id="remove" class="button setting-button remove"><i class="fas fa-trash-alt"></i>　Remove</div>
+        </div>
+        <div>
+            <div id="confirm" class="button setting-button confirm"><i class="fas fa-id-badge"></i> Confirm</div>
+            <div id="save" class="button setting-button save"><i class="fas fa-check"></i> Save</div>
+        </div>
     </div>
     <div id="success-popup" class="balloon1-top">
         <p>Success!</p>
     </div>
+
+    <div class="process">
+        <div>1. Use Google's Firebase to create a DynamicLink.</div>
+        <div class="link"><a target="_blank" href="https://firebase.google.com/docs/dynamic-links?hl=en">https://firebase.google.com/docs/dynamic-links?hl=en</a></div>
+
+        <div>2. Refer to the following page to get your API key.</div>
+        <div class="link"><a href="https://firebase.google.com/docs/dynamic-links/rest?hl=en">https://firebase.google.com/docs/dynamic-links/rest?hl=en</a></div>
+    </div>
+
     <script src="options.js"></script>
 </body>
 </html>
+
+
+
+<!--https://belz.page.link-->
+
+<!--AIzaSyAhkyup4RMDpDx5Q3vejLx2IVn90hYo81Q-->

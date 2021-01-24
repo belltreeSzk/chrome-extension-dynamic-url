@@ -11,29 +11,46 @@ import "@fortawesome/fontawesome-free/js/solid";
 import "@fortawesome/fontawesome-free/js/regular";
 
 (function() {
-  let successUrl = '';
-  let successApiToken = '';
+  let shortUrl = '';
+  let apiToken = '';
+  let resultLink = '';
+
+  let targetPageTitle = '';
+
+  main();
   function main () {
-    // const shortUrl = 'https://belz.page.link';
-    // const apiToken = 'AIzaSyAhkyup4RMDpDx5Q3vejLx2IVn90hYo81Q';
+    chrome.storage.sync.get(['shortUrl', 'apiToken'], function(value) {
+      if (typeof value.shortUrl !== 'undefined' && value.shortUrl !== '') {
+        shortUrl = value.shortUrl;
+      }
+      if (typeof value.apiToken !== 'undefined' && value.apiToken !== '') {
+        apiToken = value.apiToken;
+      }
 
-    const shortUrl = localStorage.shortUrl;
-    const apiToken = localStorage.apiToken;
+      // 設定が完了していない場合、options画面に移動
+      if (shortUrl === '' || apiToken === '') {
+        if (chrome.runtime.openOptionsPage) {
+          chrome.runtime.openOptionsPage();
+        } else {
+          window.open(chrome.runtime.getURL('options.html'));
+        }
+        return;
+      }
 
-    if (!shortUrl || !apiToken) {
-      initSettingButton();
-      hideApp();
-      return;
-    }
-    initCopyButton();
-    chrome.tabs.getSelected(null, function(tab) {
-      const longUrl = tab.url;
-      convertURL(longUrl, shortUrl, apiToken)
-    })
+      // 現在開いているページを変換に掛ける
+      chrome.tabs.getSelected(null, function(tab) {
+        targetPageTitle = tab.title;
+        const longUrl = encodeURI(tab.url);
+        convertURL(longUrl);
+      })
+    });
   }
 
-  function convertURL (longURL, shortUrl, apiToken, isConfirm = false) {
-
+  /**
+   * URLを短縮化する
+   * @param longURL
+   */
+  function convertURL (longURL) {
     const data = {
       "longDynamicLink": shortUrl + "?link=" + longURL,
       "suffix": {
@@ -48,41 +65,63 @@ import "@fortawesome/fontawesome-free/js/regular";
       contentType: 'application/json',
       dataType: "json",
       success : function(response){
-        if (isConfirm) {
-          const shortLink = response.shortLink;
-          successConfirm(shortLink, shortUrl, apiToken);
-        } else {
-          const shortLink = response.shortLink;
-          generateQRCode(shortLink);
-          const url = document.getElementById('url');
-          url.innerText = shortLink;
-          url.setAttribute('href', shortLink);
-        }
+        resultLink = response.shortLink;
+
+        // QRコードの作成
+        generateQRCode(resultLink);
+
+        // 確認用URLを表示
+        const url = document.getElementById('url');
+        url.innerText = resultLink;
+        url.setAttribute('href', resultLink);
+
+        initCopyButton();
+        initTwitterButton();
+        initFacebookButton();
       },
       error: function(response){
-        console.log(response);
-        errorPreview();
+        // 変換できないURLです
+        const message = document.getElementById('message');
+        message.innerText = 'Conversion failed.';
+
+        const canvas = document.getElementById('canvas')
+        canvas.classList.add('hide');
+
+        const warning = document.getElementById('warning')
+        warning.classList.remove('hide');
+
+        const copyButton = document.getElementById('copy');
+        copyButton.classList.add('disable');
+
+        const twitterButton = document.getElementById('twitter-share');
+        twitterButton.classList.add('disable');
+
+        const facebookButton = document.getElementById('facebook-share');
+        facebookButton.classList.add('disable');
       },
       complete: function (response) {
-        console.log('complete')
         const cover = document.getElementById('cover');
         cover.style.display ='none';
       }
     });
   }
 
-
-
+  /**
+   * QRコードの作成
+   * @param shortUrl
+   */
   function generateQRCode (shortUrl) {
     const canvas = document.getElementById('canvas')
     QRCode.toCanvas(canvas, shortUrl, function (error) {
       if (error) {
         console.error(error)
       }
-      console.log('success!');
     });
   }
 
+  /**
+   * コピーボタンの初期化
+   */
   function initCopyButton () {
     const clipboard = new ClipboardJS('.btn');
     clipboard.on('success', function(e) {
@@ -102,55 +141,33 @@ import "@fortawesome/fontawesome-free/js/regular";
     });
   }
 
-  function hideApp() {
-    const app = document.getElementById('app');
-    const setting = document.getElementById('setting');
-    app.style.display ='none';
-    setting.style.display = 'block';
+  /**
+   * Twitter用のボタン
+   */
+  function initTwitterButton () {
+    const twitterButton = document.getElementById('twitter-share');
+    twitterButton.addEventListener('click', function () {
+      const url = document.getElementById('url');
+      url.innerText = resultLink;
+      url.setAttribute('href', resultLink);
+
+      const openUrl = 'https://twitter.com/intent/tweet?text=' + encodeURI(targetPageTitle) + ' ' +  url.innerText;
+      window.open(openUrl);
+    });
   }
 
-  function initSettingButton() {
-    const confirmButton = document.getElementById('confirm');
-    confirmButton.addEventListener('click', confirm);
-    const saveButton = document.getElementById('save');
-    saveButton.classList.add('disable');
+  /**
+   * Facebook用のボタン
+   */
+  function initFacebookButton () {
+    const facebookButton = document.getElementById('facebook-share');
+    facebookButton.addEventListener('click', function () {
+      const url = document.getElementById('url');
+      url.innerText = resultLink;
+      url.setAttribute('href', resultLink);
+      const openUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + url.innerText;
+      window.open(openUrl);
+    });
   }
-
-  function confirm () {
-    const shortUrl = document.getElementById('short-url');
-    const apiToken = document.getElementById('api-token');
-
-    console.log(shortUrl.value);
-    console.log(apiToken.value);
-
-    const longUrl = 'https://www.google.com';
-    convertURL(longUrl, shortUrl.value, apiToken.value, true)
-  }
-
-  function successConfirm (shortLink, shortUrl, apiToken) {
-    const result = document.getElementById('confirm-result');
-    result.innerHTML = '<div>SUCCESS!!</div><div>https://www.google.com</div><div>↓</div>';
-    const a = document.createElement('a');
-    a.innerText = shortLink;
-    a.setAttribute('href', shortLink);
-    a.setAttribute('target', '_blank');
-    result.appendChild(a);
-
-    successUrl = shortUrl;
-    successApiToken = apiToken;
-
-
-    const saveButton = document.getElementById('save');
-    saveButton.removeEventListener('click', save);
-    saveButton.addEventListener('click', save);
-    saveButton.classList.remove('disable');
-  }
-
-  function save () {
-    console.log('save');
-    localStorage.shortUrl = successUrl;
-    localStorage.apiToken = successApiToken;
-  }
-  main();
 })();
 

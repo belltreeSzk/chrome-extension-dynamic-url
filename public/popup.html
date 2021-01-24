@@ -2,15 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Chrome Extension</title>
+    <title>Original URL Shortener</title>
     <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <div id="app" class="app">
       <div class="link">
           <a id="url" href="#" target="_blank"></a>
+          <span id="message"></span>
       </div>
-      <canvas id="canvas" class="canvas"></canvas>
+      <div>
+          <canvas id="canvas" class="canvas"></canvas>
+          <img id="warning" class="warning hide" src="icons/warning.png">
+      </div>
+
       <div class="buttons">
           <div id="copy" class="button clipboard btn" data-clipboard-action="copy" data-clipboard-target="#url"><i class="fas fa-copy"></i> Copy    </div>
           <div id="twitter-share" class="button twitter"><i class="fab fa-twitter"></i> Share</div>
@@ -20,30 +25,6 @@
           <i class="fas fa-spinner fa-spin"></i>
       </div>
   </div>
-
-  <div id="setting" class="setting">
-      <div class="title">Thanks for Install</div>
-
-      <div class="field">
-          <div class="field-name">ShortURL</div>
-          <input id="short-url" class="input-field" type="text" placeholder="****.page.link" value="https://belz.page.link">
-      </div>
-
-      <div class="field">
-          <div class="field-name">API TOKEN</div>
-          <input id="api-token" class="input-field" type="text" placeholder="AIzaSyAhkyup4RMD***********" value="AIzaSyAhkyup4RMDpDx5Q3vejLx2IVn90hYo81Q">
-      </div>
-
-      <div id="confirm-result" class="field confirm-result">
-          <div>Enter your ShortURL and API Token and select <b>Confirm</b>.</div>
-      </div>
-
-      <div class="field setting-buttons">
-          <div id="confirm" class="button setting-button confirm">Confirm</div>
-          <div id="save" class="button setting-button save">Save</div>
-      </div>
-  </div>
-
   <script src="popup.js"></script>
 </body>
 </html>

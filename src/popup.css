@@ -145,3 +145,12 @@ cursor: default;
 .disable:hover {
 opacity: 1;
 }
+
+.warning {
+    height: 88px;
+    padding: 30px;
+}
+
+.hide {
+    display: none;
+}
